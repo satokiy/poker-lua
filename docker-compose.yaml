@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  openresty:
+    build: .
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./lua/poker.lua:/usr/local/openresty/nginx/lua/poker.lua
