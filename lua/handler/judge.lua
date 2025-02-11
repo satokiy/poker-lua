@@ -1,6 +1,5 @@
 local cjson = require "cjson"
-local evaluate = require "evaluate"
-
+local evaluate = require "../evaluate"
 
 local function handle_request()
     ngx.req.read_body()
@@ -15,7 +14,7 @@ local function handle_request()
     local result, res = pcall(cjson.decode, body)
     if result == false then
         ngx.status = ngx.HTTP_BAD_REQUEST
-        ngx.say("Invalid JSON")
+        ngx.say("Invalid JSON: `", body, "` ",res)
         return
     end
     
@@ -26,6 +25,7 @@ local function handle_request()
     end
 
     local hand = res.hand
+    ngx.log(ngx.DEBUG, "Hand: ", cjson.encode(hand))
     local result = evaluate(hand)
     ngx.say(cjson.encode({result = result}))
 end

@@ -1,8 +1,8 @@
-local Deck = require "deck"
+local Deck = require "..deck"
 local cjson = require "cjson"
 
-local d = Deck.new()
-local function draw()
+local function handle_request()
+  local d = Deck.new()
   local num_cards = tonumber(ngx.var.arg_num) or 5
   local success, result = pcall(
     function() return d:deal(num_cards) end
@@ -17,4 +17,4 @@ local function draw()
   ngx.say(cjson.encode({hand = result}))
 end
 
-draw()
+handle_request()
