@@ -1,10 +1,17 @@
-version: '3.8'
-
 services:
   openresty:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8082:8080"
     volumes:
       - ./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ./lua/poker.lua:/usr/local/openresty/nginx/lua/poker.lua
+  # test:
+  #   build:
+  #     context: .
+  #     dockerfile: DockerfileTest
+  #   volumes:
+  #     - ./lua:/usr/local/openresty/nginx/lua
+  #   command: ["busted", "/usr/local/openresty/nginx/lua"]
