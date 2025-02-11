@@ -7,7 +7,7 @@ services:
       - "8082:8080"
     volumes:
       - ./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
-      - ./lua/poker.lua:/usr/local/openresty/nginx/lua/poker.lua
+      - ./lua/:/usr/local/openresty/nginx/lua/
   # test:
   #   build:
   #     context: .
