@@ -1,9 +1,6 @@
 local cjson = require "cjson"
+local evaluate = require "evaluate"
 
-local function evaluate_hand(hand)
-    -- ポーカーの役判定ロジックをここに実装
-    return "役の名前"
-end
 
 local function handle_request()
     ngx.req.read_body()
@@ -29,7 +26,7 @@ local function handle_request()
     end
 
     local hand = res.hand
-    local result = evaluate_hand(hand)
+    local result = evaluate(hand)
     ngx.say(cjson.encode({result = result}))
 end
 

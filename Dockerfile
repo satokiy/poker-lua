@@ -4,7 +4,7 @@ FROM openresty/openresty:alpine
 COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 
 # Copy Lua scripts
-COPY lua/poker.lua /usr/local/openresty/nginx/lua/poker.lua
+COPY lua/ /usr/local/openresty/nginx/lua/
 
 # Expose port 8080
 EXPOSE 8080
