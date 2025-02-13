@@ -10,8 +10,7 @@ local function validate(hand)
 end
 
 local function evaluate(hand)
-  -- ポーカーの役判定ロジックをここに実装
-
+  
   local valid, result = pcall(validate, hand)
   if not valid then
     return nil, result
