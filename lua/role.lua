@@ -1,5 +1,6 @@
 local rank_map = require "utils/rank_map"
 local suit_map = require "utils/suit_map"
+local map_size = require "utils/map_size"
 
 local function has_three_card(hand)
   local map = rank_map(hand.cards)
@@ -27,13 +28,10 @@ end
 
 -- 最大値と最小値の差分が4 and 重複していない
 local function is_straight(hand)
-  local ranks = hand.ranks
-  ngx.log(ngx.STDERR, 'check straight!\n', ranks[1], ranks[2], ranks[3], ranks[4], ranks[5])
   local max = math.max(table.unpack(hand.ranks))
   local min = math.min(table.unpack(hand.ranks))
-
-  local noDupSize = #rank_map(hand.cards) == 5
-
+  local noDupSize = map_size(rank_map(hand.cards)) == 5
+    
   if (max - min == 4) and noDupSize then
     return true
   end
@@ -42,11 +40,23 @@ local function is_straight(hand)
 end
 
 local function is_flush(hand)
-  return #suit_map(hand.cards) == 1
+  return map_size(suit_map(hand.cards)) == 1
 end
 
 local function is_loyal_straight_flush(hand)
- -- TODO
+ local is_flash = is_flush(hand)
+ 
+ --[[
+ table.sortはインプレースでソートするため、コピーを作成してからソートする
+ sortはデフォルトで昇順
+ ]]
+ local ranks ={table.unpack(hand.ranks)}
+ table.sort(ranks)
+
+ if ranks[1] == 1 and ranks[2] == 10 and ranks[3] == 11 and ranks[4] == 12 and ranks[5] == 13 then
+   return true
+ end
+ 
  return false
 end
 
@@ -91,44 +101,28 @@ local function is_one_pair(hand)
   return has_one_pair(hand)
 end
 
+--[[
+ ここで roles = { loyal_straight_flush = is_loyal_straight_flush, ... } としていないのは、
+ pairsで回す際に連想配列だと順序が保証されないため。
+]]
 local roles = {
-  loyal_straight_flush = is_loyal_straight_flush,
-  straight_flush = is_straight_flush,
-  four_of_a_kind = is_four_of_a_kind,
-  full_house = is_full_house,
-  flush = is_flush,
-  straight = is_straight,
-  three_of_a_kind = is_three_of_a_kind,
-  two_pair = is_two_pair,
-  one_pair = is_one_pair,
-  high_card = function() return true end
+  {name = "loyal_straight_flush", func = is_loyal_straight_flush},
+  {name = "straight_flush", func = is_straight_flush},
+  {name = "four_of_a_kind", func = is_four_of_a_kind},
+  {name = "full_house", func = is_full_house},
+  {name = "flush", func = is_flush},
+  {name = "straight", func = is_straight},
+  {name = "three_of_a_kind", func = is_three_of_a_kind},
+  {name = "two_pair", func = is_two_pair},
+  {name = "one_pair", func = is_one_pair},
+  {name = "high_card", func = function() return true end}
 }
 
 local function role(hand)
-
-  ngx.log(ngx.STDERR, 'lets check the role!\n', tostring(hand.cards[1].rank), tostring(hand.cards[1].suit), tostring(hand.cards[2].rank), tostring(hand.cards[2].suit), tostring(hand.cards[3].rank), tostring(hand.cards[3].suit), tostring(hand.cards[4].rank), tostring(hand.cards[4].suit), tostring(hand.cards[5].rank), tostring(hand.cards[5].suit))
-
-
-  if is_loyal_straight_flush(hand) then
-    return "loyal_straight_flush"
-  elseif is_straight_flush(hand) then
-    return "straight_flush"
-  elseif is_four_of_a_kind(hand) then
-    return "four_of_a_kind"
-  elseif is_full_house(hand) then
-    return "full_house"
-  elseif is_flush(hand) then
-    return "flush"
-  elseif is_straight(hand) then
-    return "straight"
-  elseif is_three_of_a_kind(hand) then
-    return "three_of_a_kind"
-  elseif is_two_pair(hand) then
-    return "two_pair"
-  elseif is_one_pair(hand) then
-    return "one_pair"
-  else
-    return "hogehoge"
+  for _, role in pairs(roles) do
+    if role.func(hand) then
+      return role.name
+    end
   end
 end
 

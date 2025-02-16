@@ -1,0 +1,14 @@
+# luarocksを使いたいためfatを指定
+# https://hub.docker.com/r/openresty/openresty#luarocks
+FROM openresty/openresty:alpine-fat
+
+RUN /usr/local/openresty/luajit/bin/luarocks install busted
+
+COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
+
+# Copy Lua scripts
+COPY lua/ /usr/local/openresty/nginx/lua/
+
+WORKDIR /usr/local/openresty/nginx/lua
+
+CMD ["busted", "."]

@@ -8,10 +8,10 @@ services:
     volumes:
       - ./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ./lua/:/usr/local/openresty/nginx/lua/
-  # test:
-  #   build:
-  #     context: .
-  #     dockerfile: DockerfileTest
-  #   volumes:
-  #     - ./lua:/usr/local/openresty/nginx/lua
-  #   command: ["busted", "/usr/local/openresty/nginx/lua"]
+  test:
+    build:
+      context: .
+      dockerfile: DockerfileTest
+    volumes:
+      - ./lua:/usr/local/openresty/nginx/lua
+    command: ["busted", "."]

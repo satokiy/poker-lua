@@ -25,7 +25,7 @@ local function handle_request()
     end
 
     local hand = res.hand
-    ngx.log(ngx.DEBUG, "Hand: ", cjson.encode(hand))
+    ngx.log(ngx.STDERR, "Hand: ", cjson.encode(hand))
     local result = evaluate(hand)
     ngx.say(cjson.encode({result = result}))
 end
