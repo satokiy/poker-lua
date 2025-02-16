@@ -15,10 +15,10 @@ local ranks = {
   "8",
   "9",
   "10",
-  "J",
-  "Q",
-  "K",
-  "A"
+  "11",
+  "12",
+  "13",
+  "1"
 }
 
 local function shuffle(deck)
@@ -35,6 +35,7 @@ local Deck = {}
 
 Deck.new = function()
 
+  -- TODO: これ何のために必要？
   math.randomseed(os.time())
   
   local deck = {}
