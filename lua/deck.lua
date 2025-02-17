@@ -35,7 +35,6 @@ local Deck = {}
 
 Deck.new = function()
 
-  -- TODO: これ何のために必要？
   math.randomseed(os.time())
   
   local deck = {}
